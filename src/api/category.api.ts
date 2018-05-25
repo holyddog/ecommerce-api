@@ -9,11 +9,13 @@ import { ErrorModel } from '../models/error.model';
 export class CategoryApi {
     private categories: mongodb.Collection;
     private outletItems: mongodb.Collection;
+    private test: mongodb.Collection;
     private db: mongodb.Db;
 
     constructor(db: mongodb.Db, app: express.Express) {
         this.db = db;
         this.categories = db.collection('categories');
+        this.test = db.collection('test');
 
         app.get('/categories', (req, res) => {
             this.getCategories(req, res);

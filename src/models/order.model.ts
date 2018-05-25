@@ -47,14 +47,17 @@ export class OrderModel {
 }
 
 export class OrderStatusModel {
+    atv?: boolean; // activated
     paid?: boolean; // paid
     fin?: boolean; // finished
     del?: boolean; // deleted
+
     plog?: PaymentLogModel; // payment_log
 
     static getObject?(data: OrderStatusModel): any {
         let o: any = {};
 
+        if (data.atv != null) o.activated = data.atv;
         if (data.paid != null) o.paid = data.paid;
         if (data.fin != null) o.finished = data.fin;
         if (data.del != null) o.deleted = data.del;

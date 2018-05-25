@@ -83,12 +83,11 @@ export class OrderApi {
                     this.orders.updateOne({ ono: bd.order_id }, {
                         $set: {
                             edate: new Date(),
-                            sta: {
-                                paid: true,
-                                plog: {
-                                    mp: bd.masked_pan,
-                                    tdt: new Date(bd.transaction_datetime)
-                                }
+                            "sta.atv": true,
+                            "sta.paid": true,
+                            "sta.plog": {
+                                mp: bd.masked_pan,
+                                tdt: new Date(bd.transaction_datetime)
                             }
                         }
                     }).then(() => {
@@ -111,7 +110,7 @@ export class OrderApi {
     }
 
     getOrders(req, res) {
-        this.orders.find({ oby: +req.user.id, "sta.paid": true }, { ono: 1, tqty: 1, tprice: 1, pmt: 1, sta: 1, items: 1, cdate: 1, edate: 1 })
+        this.orders.find({ oby: +req.user.id, "sta.atv": true }, { ono: 1, tqty: 1, tprice: 1, pmt: 1, sta: 1, items: 1, cdate: 1, edate: 1 })
             .sort({ _id: -1 })
             .toArray()
             .then(data => {
@@ -181,8 +180,15 @@ export class OrderApi {
             dela: address,
             pmt: payment,
             items: items,
+            sta: {
+                atv: false
+            },
             cdate: now
         };
+
+        if (payment.id == 3) {
+            data.sta.atv = true;
+        }
 
         let yy = now.getFullYear().toString().slice(-2);
         let mm = ("00" + (now.getMonth() + 1)).slice(-2);

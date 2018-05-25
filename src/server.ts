@@ -25,6 +25,7 @@ import { UserApi } from './api/user.api';
 import { OrderApi } from './api/order.api';
 import { ProductApi } from './api/product.api';
 import { AddressApi } from './api/address.api';
+import { PaymentApi } from './api/payment.api';
 
 import { ShopApi } from './api/shop.api';
 
@@ -41,17 +42,15 @@ export class Server {
         this.config().then((db: mongodb.Db) => {
             new OAuth2(this.app, db);
 
-            db.collection('users').createIndex('id', { name: 'pk', unique: true });
-
-            db.collection('items').createIndex('id', { name: 'pk', unique: true });
-
             db.collection('categories').createIndex('id', { name: 'pk', unique: true });
 
-            db.collection('shops').createIndex('id', { name: 'pk', unique: true });
-            
+            db.collection('users').createIndex('id', { name: 'pk', unique: true });
             db.collection('orders').createIndex('ono', { name: 'index_ono', unique: true });
-
+            db.collection('items').createIndex('id', { name: 'pk', unique: true });
             db.collection('addresses').createIndex('id', { name: 'pk', unique: true });
+            db.collection('payments').createIndex('id', { name: 'pk', unique: true });
+
+            db.collection('shops').createIndex('id', { name: 'pk', unique: true });
 
             this.api(db);
         });
@@ -68,6 +67,7 @@ export class Server {
         new OrderApi(db, app);
         new ProductApi(db, app);
         new AddressApi(db, app);
+        new PaymentApi(db, app);
 
         new ShopApi(db, app);
 
@@ -101,7 +101,7 @@ export class Server {
             res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 
             next();
-        });    
+        });
 
         let mongo = mongodb.MongoClient;
         return mongo.connect(Config.MongoUri);
